@@ -20,6 +20,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using System.IO;
+using FlexiCloudPay.Tasks;
+using FlexiCloudPay.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlexiCloudPay.Web.Host.Startup
 {
@@ -87,6 +90,14 @@ namespace FlexiCloudPay.Web.Host.Startup
                     )
                 )
             );
+
+            //services.AddDbContext<FlexiCloudPayDbContext>(options =>
+            //        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            //services.AddScoped<iTaskAppService, TaskAppService>();
+
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
