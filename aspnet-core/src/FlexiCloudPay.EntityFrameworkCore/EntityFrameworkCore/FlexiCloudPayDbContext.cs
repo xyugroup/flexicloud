@@ -14,6 +14,9 @@ namespace FlexiCloudPay.EntityFrameworkCore
 
         public DbSet<Employees> Employees { get; set; }
 
+        public DbSet<PaySources> PaySources { get; set; }
+
+
         public FlexiCloudPayDbContext(DbContextOptions<FlexiCloudPayDbContext> options)
             : base(options)
         {

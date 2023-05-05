@@ -14,11 +14,12 @@ namespace FlexiCloudPay.Payrolls
     {
         IRepository<Employees> _employeesRepository;
 
+        IRepository<PaySources> _paySourceResository;
 
-        public Payroll(IRepository<Employees> employeerepository)
+        public Payroll(IRepository<Employees> employeerepository, IRepository<PaySources> paySourceResository)
         {
             _employeesRepository = employeerepository;
-            //_paySourceResository = paySourceResository;
+            _paySourceResository = paySourceResository;
             //_computeMethodRepository = computeMethodRepository;
             //_generalsetupRepository = generalsetupRepository;
         }
@@ -33,6 +34,13 @@ namespace FlexiCloudPay.Payrolls
             IEnumerable<decimal> bdet = task.Result.Select(mt => mt.Basic);
             decimal basic = bdet.Sum();
 
+            var task2 = CapturePaySource(sPeriod, iCycle, sEmpNo);
+
+            IEnumerable<decimal> wddet = task2.Result.Select(ps => ps.workday);
+            decimal workday = wddet.Sum();
+
+            IEnumerable<decimal> dwdet = task2.Result.Select(ps => ps.daywork);
+            decimal daywork = dwdet.Sum();
 
             return true;
         }
@@ -49,5 +57,12 @@ namespace FlexiCloudPay.Payrolls
             return task;
         }
 
+        public Task<List<PaySources>> CapturePaySource(String sPeriod, int iCycle, String sEmpNo)
+        {
+
+            var task = _paySourceResository.GetAllListAsync(e => e.period == sPeriod && e.cycle == iCycle && e.empno == sEmpNo);
+
+            return task;
+        }
     }
 }
