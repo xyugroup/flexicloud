@@ -10,6 +10,6 @@ namespace FlexiCloudPay.Payrolls
 {
     public interface iPayroll: IApplicationService
     {
-        public Boolean ComputePayroll(String iPeriod, int iCycle, String sEmpNo);
+        public Task<bool> ComputePayroll(string sPeriod, int iCycle, string sEmpNo);
     }
 }
