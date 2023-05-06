@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlexiCloudPay.Migrations
 {
     [DbContext(typeof(FlexiCloudPayDbContext))]
-    [Migration("20230504080046_Add Table Task")]
-    partial class AddTableTask
+    [Migration("20230506050912_Add Table Employee, PaySource")]
+    partial class AddTableEmployeePaySource
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1576,6 +1576,156 @@ namespace FlexiCloudPay.Migrations
                     b.ToTable("AbpUsers");
                 });
 
+            modelBuilder.Entity("FlexiCloudPay.Entities.Employees", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address1")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Address2")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Address3")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Bank")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BankAccout")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankIC")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Basic")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Bloodtype")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("ColorIC")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ContractDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ContractExpired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Country")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DOB")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Department")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EffDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmpNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpiredOfPassport")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Nationality")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NoICNew")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("NoICOld")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("NoOfPassport")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("ORPTable")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PermitDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("PermitExpired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PermitNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PlaceOfBirth")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("PostCode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Race")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Religion")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Title")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
+
+                    b.Property<string>("phoneno")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Employee");
+                });
+
             modelBuilder.Entity("FlexiCloudPay.Entities.MyEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -1593,6 +1743,55 @@ namespace FlexiCloudPay.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MyEntity");
+                });
+
+            modelBuilder.Entity("FlexiCloudPay.Entities.PaySources", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("absent")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("allow")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("cycle")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("daywork")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("deduct")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("empno")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ot10")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ot15")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ot20")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ot30")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("period")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("workday")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaySource");
                 });
 
             modelBuilder.Entity("FlexiCloudPay.MultiTenancy.Tenant", b =>
