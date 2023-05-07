@@ -4,6 +4,7 @@ using FlexiCloudPay.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlexiCloudPay.Migrations
 {
     [DbContext(typeof(FlexiCloudPayDbContext))]
-    partial class FlexiCloudPayDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230506142241_Add Table ComputeMethod")]
+    partial class AddTableComputeMethod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

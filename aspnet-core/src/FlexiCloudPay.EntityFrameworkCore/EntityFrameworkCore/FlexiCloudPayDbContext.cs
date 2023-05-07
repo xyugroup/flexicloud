@@ -12,6 +12,10 @@ namespace FlexiCloudPay.EntityFrameworkCore
         /* Define a DbSet for each entity of the application */
         public DbSet<MyEntity> MyEntity { get; set; }
 
+        public DbSet<GeneralSetup> GeneralSetup { get; set; }
+
+        public DbSet<ComputeMethod> ComputeMethod { get; set; }
+
         public DbSet<Employees> Employees { get; set; }
 
         public DbSet<PaySources> PaySources { get; set; }
