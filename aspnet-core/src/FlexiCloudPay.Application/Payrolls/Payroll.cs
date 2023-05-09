@@ -59,12 +59,12 @@ namespace FlexiCloudPay.Payrolls
         IRepository<ComputeMethod> _computeMethodRepository;
 
         public Payroll(IRepository<Employees> employeerepository, IRepository<PaySources> paySourceResository,
-            IRepository<GeneralSetup> generalsetupRepository)
+            IRepository<GeneralSetup> generalsetupRepository,IRepository<ComputeMethod> computeMethodRepository)
         {
             _generalsetupRepository = generalsetupRepository;
             _employeesRepository = employeerepository;
             _paySourceResository = paySourceResository;
-            //_computeMethodRepository = computeMethodRepository;
+            _computeMethodRepository = computeMethodRepository;
 
         }
 
@@ -112,8 +112,7 @@ namespace FlexiCloudPay.Payrolls
 
             GetYearMonth(sPeriod, out iYear, out iMonth);
 
-            GetCurrentCutOff(sPeriod, iCycle,iYear, iMonth,out CutOffStart,out CutOffEnd, out dFactor);
-
+            
 
 
 
@@ -121,7 +120,7 @@ namespace FlexiCloudPay.Payrolls
 
             IEnumerable<decimal> bdet = task.Result.Select(mt => mt.Basic);
             basic = bdet.Sum();
-
+                        
             IEnumerable<int> cmdet = task.Result.Select(mt => mt.ComputeMethod);
             computemethod = cmdet.First();
 
@@ -130,6 +129,7 @@ namespace FlexiCloudPay.Payrolls
             //IEnumerable<string> cmStartdet = task11.Result.Select(cm => cm.CutOffStart1);
             //string CutOffStart1 = cmStartdet.First();
 
+            GetCurrentCutOff(sPeriod, iCycle, iYear, iMonth, computemethod, out CutOffStart, out CutOffEnd, out dFactor);
 
             //IEnumerable<string> cmEnddet = task11.Result.Select(cm => cm.CutOffEnd1);
 
@@ -170,16 +170,19 @@ namespace FlexiCloudPay.Payrolls
             if (ot15 > 0)
             {
                 ot15amt = ot15 * ORPHour * (decimal)1.50;
+                OTSum = OTSum + ot15amt;
             }
 
             if (ot20 > 0)
             {
                 ot20amt = ot20 * ORPHour * 2;
+                OTSum = OTSum + ot20amt;
             }
 
             if (ot30 > 0)
             {
                 ot30amt = ot30 * ORPHour * 3;
+                OTSum = OTSum + ot30amt;
             }
 
             return true;
@@ -212,12 +215,16 @@ namespace FlexiCloudPay.Payrolls
             return task;
         }
 
-        public Task<List<ComputeMethod>> GetComputeMethod(int MethodCode)
+        public async Task<ComputeMethod> GetComputeMethod(int MethodCode)
         {
+            
 
-            var task = _computeMethodRepository.GetAllListAsync(t => t.Id == MethodCode);
-
-            return task;
+            
+                var task = await _computeMethodRepository.FirstOrDefaultAsync(t => t.Id == MethodCode);
+                //var task = await _computeMethodRepository.FirstOrDefaultAsync(t => t.methodcode == "M1");
+                return task;
+            
+            
 
         }
 
@@ -230,14 +237,15 @@ namespace FlexiCloudPay.Payrolls
             // = iMonth < 10 ? "0" + iMonth.ToString() : iMonth.ToString();
         }
 
-        private void GetCurrentCutOff(String sPeriod, int iCycle, int iYear, int iMonth,out DateTime dCutOffStart, out DateTime dCutOffEnd, out Decimal dFactor)
+        private void GetCurrentCutOff(String sPeriod, int iCycle, int iYear, int iMonth, int iComputeMethod , out DateTime dCutOffStart, out DateTime dCutOffEnd, out Decimal dFactor)
         {
             string sCycle = Enum.GetName(typeof(Cycle), iCycle);
             string sCutOffStart = "";
             string sCutOffEnd = "";
-          
+            decimal dTempBasicFactor = 1;
 
-            var task = GetComputeMethod(iCycle);
+            //var task = GetComputeMethod(iCycle);
+            var task = GetComputeMethod(iComputeMethod);
 
             int n = 0;
 
@@ -248,19 +256,45 @@ namespace FlexiCloudPay.Payrolls
             //iMonth = Convert.ToInt32(sPeriod.Substring(4, 2));
 
             //Cycle1
-            IEnumerable<string> cmdetind1 = task.Result.Select(t => t.cycle1);
-            string MethodCode1 = cmdetind1.First();
-            if (MethodCode1 == sCycle) { n = 1; }
+            //IEnumerable<string> cmdetind1 = task.Result.Select(t => t.cycle1);
+            //string MethodCode1 = task.Result.cycle1;
+            //string MethodCode1 = cmdetind1.First();
 
+            //Cycle1
+            string MethodCode1 = task.Result.cycle1;
+            if (MethodCode1 == sCycle)
+            {
+                n = 1;
+
+                sCutOffStart = task.Result.CutOffStart1;
+                sCutOffEnd = task.Result.CutOffEnd1;
+                dTempBasicFactor = task.Result.basicfactor1;
+            }
+            
+
+            /*
             IEnumerable<string> cmdstart1 = task.Result.Select(t => t.CutOffStart1);
             sCutOffStart = cmdstart1.First();
             IEnumerable<string> cmdEnd1 = task.Result.Select(t => t.CutOffEnd1);
             sCutOffEnd = cmdEnd1.First();
             IEnumerable<decimal> cmdfactor1 = task.Result.Select(t => t.basicfactor1);
             dFactor = cmdfactor1.First();
+            */
 
 
             //Cycle2
+            string MethodCode2 = task.Result.cycle2;
+            if (MethodCode2 == sCycle)
+            {
+                n = 2;
+
+                sCutOffStart = task.Result.CutOffStart2;
+                sCutOffEnd = task.Result.CutOffEnd2;
+                dTempBasicFactor = task.Result.basicfactor2;
+            }
+
+
+            /*
             IEnumerable<string> cmdetind2 = task.Result.Select(t => t.cycle2);
             string MethodCode2 = cmdetind2.First();
             if (MethodCode2 == sCycle) { n = 2; }
@@ -272,8 +306,20 @@ namespace FlexiCloudPay.Payrolls
             sCutOffEnd = cmdEnd2.First();
             IEnumerable<decimal> cmdfactor2 = task.Result.Select(t => t.basicfactor2);
             dFactor = cmdfactor2.First();
+            */
 
             //Cycle3
+            string MethodCode3 = task.Result.cycle3;
+            if (MethodCode3 == sCycle)
+            {
+                n = 3;
+
+                sCutOffStart = task.Result.CutOffStart3;
+                sCutOffEnd = task.Result.CutOffEnd3;
+                dTempBasicFactor = task.Result.basicfactor3;
+            }
+
+            /*
             IEnumerable<string> cmdetind3 = task.Result.Select(t => t.cycle3);
             string MethodCode3 = cmdetind3.First();
             if (MethodCode3 == sCycle) { n = 3; }
@@ -284,8 +330,20 @@ namespace FlexiCloudPay.Payrolls
             sCutOffEnd = cmdEnd3.First();
             IEnumerable<decimal> cmdfactor3 = task.Result.Select(t => t.basicfactor3);
             dFactor = cmdfactor3.First();
+            */
+
 
             //Cycle4
+            string MethodCode4 = task.Result.cycle4;
+            if (MethodCode4 == sCycle)
+            {
+                n = 4;
+
+                sCutOffStart = task.Result.CutOffStart4;
+                sCutOffEnd = task.Result.CutOffEnd4;
+                dTempBasicFactor = task.Result.basicfactor4;
+            }
+            /*
             IEnumerable<string> cmdetind4 = task.Result.Select(t => t.cycle4);
             string MethodCode4 = cmdetind4.First();
             if (MethodCode4 == sCycle) { n = 4; }
@@ -296,8 +354,23 @@ namespace FlexiCloudPay.Payrolls
             sCutOffEnd = cmdEnd4.First();
             IEnumerable<decimal> cmdfactor4 = task.Result.Select(t => t.basicfactor4);
             dFactor = cmdfactor4.First();
+            */
+
 
             //Cycle5
+            string MethodCode5 = task.Result.cycle5;
+            if (MethodCode5 == sCycle)
+            {
+                n = 5;
+
+                sCutOffStart = task.Result.CutOffStart5;
+                sCutOffEnd = task.Result.CutOffEnd5;
+                dTempBasicFactor = task.Result.basicfactor5;
+            }
+
+
+
+            /*
             IEnumerable<string> cmdetind5 = task.Result.Select(t => t.cycle5);
             string MethodCode5 = cmdetind5.First();
             if (MethodCode5 == sCycle) { n = 5; }
@@ -308,8 +381,9 @@ namespace FlexiCloudPay.Payrolls
             sCutOffEnd = cmdEnd5.First();
             IEnumerable<decimal> cmdfactor5 = task.Result.Select(t => t.basicfactor5);
             dFactor = cmdfactor5.First();
+            */
 
-
+            dFactor = dTempBasicFactor;
             GetCutOff(iYear, iMonth, sCutOffStart, sCutOffEnd,out dCutOffStart,out dCutOffEnd);
         
         
