@@ -112,11 +112,7 @@ namespace FlexiCloudPay.Payrolls
 
             GetYearMonth(sPeriod, out iYear, out iMonth);
 
-            
-
-
-
-            var task = GetEmployee(sEmpNo, sPeriod, iCycle);
+            var task = GetEmployee(sEmpNo, sPeriod, iCycle,PayrollStart);
 
             IEnumerable<decimal> bdet = task.Result.Select(mt => mt.Basic);
             basic = bdet.Sum();
@@ -185,16 +181,19 @@ namespace FlexiCloudPay.Payrolls
                 OTSum = OTSum + ot30amt;
             }
 
+
+
+
             return true;
         }
 
-        public Task<List<Employees>> GetEmployee(string sEmpNo, String sPeriod, int iCycle)
+        public Task<List<Employees>> GetEmployee(string sEmpNo, String sPeriod, int iCycle, DateTime dIntStart)
         {
 
-            var task = _employeesRepository.GetAllListAsync(e => e.EmpNo == sEmpNo);
+            var task = _employeesRepository.GetAllListAsync(e => e.EmpNo == sEmpNo && e.EffDate >= dIntStart);
 
-            IEnumerable<decimal> bdet = task.Result.Select(mt => mt.Basic);
-            decimal basic = bdet.Sum();
+            //IEnumerable<decimal> bdet = task.Result.Select(mt => mt.Basic);
+            //decimal basic = bdet.Sum();
 
 
             return task;
